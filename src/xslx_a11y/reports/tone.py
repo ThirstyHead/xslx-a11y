@@ -1,4 +1,13 @@
-"""Social model tone phrasing, who-benefits mappings, and language guards for Excel."""
+"""Social model tone phrasing, who-benefits mappings, and language guards for Excel.
+
+Delegates core tone checks to engine_a11y.reports.tone.
+"""
+from engine_a11y.reports.tone import (
+    BANNED_PHRASES,
+    assert_social_model_language,
+)
+
+DISALLOWED_MEDICAL_TERMS = list(BANNED_PHRASES)
 
 WHO_MAP = {
     "1.1.1": (
@@ -93,26 +102,10 @@ EXCEL_ASSISTANT_NOTES = {
     ),
 }
 
-DISALLOWED_MEDICAL_TERMS = [
-    "victim of",
-    "afflicted with",
-    "suffering from",
-    "confined to a wheelchair",
-    "wheelchair-bound",
-    "handicapped",
-    "crippled",
-    "invalid",
-    "normal person",
-    "normal people",
+__all__ = [
+    "WHO_MAP",
+    "RULE_BARRIER_EXPLANATIONS",
+    "EXCEL_ASSISTANT_NOTES",
+    "DISALLOWED_MEDICAL_TERMS",
+    "assert_social_model_language",
 ]
-
-
-def assert_social_model_language(text: str) -> None:
-    """Validates that documentation and reports adhere to the social model of disability."""
-    lowered = text.lower()
-    for term in DISALLOWED_MEDICAL_TERMS:
-        if term in lowered:
-            raise ValueError(
-                f"Social model violation: phrase '{term}' found in text. "
-                "Use social model phrasing emphasizing barriers in the environment/document."
-            )

@@ -2,8 +2,14 @@
 import argparse
 from pathlib import Path
 import sys
-from typing import List, Optional
+from typing import List, Optional, Set
 
+from engine_a11y.criteria_config import (
+    apply_criteria_config,
+    generate_criteria_template,
+    load_criteria_config,
+)
+from engine_a11y.findings import summarize
 from xslx_a11y.audit import audit_file, audit_result_to_json
 from xslx_a11y.remediate import remediate_file
 from xslx_a11y.reports.html import render_html
@@ -17,10 +23,12 @@ def process_single_file(
     input_path: Path,
     args: argparse.Namespace,
     out_dir: Path,
+    excluded_sc: Optional[Set[str]] = None,
 ) -> bool:
     """Processes a single .xlsx file: triage, audit, remediation, and reporting."""
     stem = input_path.stem
     target_path = input_path
+    active_excluded = set(excluded_sc or [])
 
     if args.triage:
         triaged_xlsx = Path(args.out_xlsx) if args.out_xlsx else out_dir / f"{stem}-triaged.xlsx"
@@ -30,6 +38,10 @@ def process_single_file(
 
     # 1. Initial audit
     audit_before = audit_file(target_path)
+    if active_excluded:
+        apply_criteria_config(audit_before.get("findings", []), active_excluded)
+        audit_before["summary"] = summarize(audit_before.get("findings", []))
+
     audit_after = None
 
     # 2. Remediate if requested
@@ -49,10 +61,18 @@ def process_single_file(
         for fix in rem_res.get("remediations_applied", []):
             print(f" - {fix}")
         audit_after = audit_file(fixed_xlsx)
+        if active_excluded:
+            apply_criteria_config(audit_after.get("findings", []), active_excluded)
+            audit_after["summary"] = summarize(audit_after.get("findings", []))
 
     # 3. Render reports
     formats = [f.strip().lower() for f in args.format.split(",")]
-    md_text = render_md(audit_before, after_result=audit_after, source_path=str(input_path))
+    md_text = render_md(
+        audit_before,
+        after_result=audit_after,
+        source_path=str(input_path),
+        excluded_sc=active_excluded,
+    )
 
     if "md" in formats:
         md_file = out_dir / f"{stem}-a11y-report.md"
@@ -102,8 +122,24 @@ def main(argv: Optional[List[str]] = None) -> None:
     parser.add_argument("--triage", action="store_true", help="Launch interactive human triage session")
     parser.add_argument("--out-xlsx", help="Output path for remediated .xlsx file")
     parser.add_argument("--batch", action="store_true", help="Process all .xlsx files in specified directory")
+    parser.add_argument(
+        "--criteria",
+        help="Path to criteria configuration checklist ([x]/[ ]) or YAML for what-if testing",
+    )
+    parser.add_argument(
+        "--init-criteria",
+        nargs="?",
+        const="a11y-criteria.txt",
+        help="Generate default criteria checklist file ([x]/[ ]) and exit",
+    )
 
     args = parser.parse_args(argv)
+
+    if args.init_criteria:
+        out_criteria = Path(args.init_criteria)
+        generate_criteria_template(out_criteria)
+        print(f"Generated criteria checklist at: {out_criteria}")
+        sys.exit(0)
 
     if args.gui:
         try:
@@ -126,6 +162,14 @@ def main(argv: Optional[List[str]] = None) -> None:
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    excluded_sc: Set[str] = set()
+    if args.criteria:
+        criteria_path = Path(args.criteria)
+        if not criteria_path.exists():
+            print(f"Error: Criteria config '{criteria_path}' not found.", file=sys.stderr)
+            sys.exit(2)
+        _, excluded_sc = load_criteria_config(criteria_path)
+
     if input_path.is_dir() or args.batch:
         files = sorted(input_path.glob("*.xlsx")) if input_path.is_dir() else [input_path]
         if not files:
@@ -134,12 +178,12 @@ def main(argv: Optional[List[str]] = None) -> None:
         all_passed = True
         for f in files:
             print(f"\nProcessing: {f.name}...")
-            passed = process_single_file(f, args, out_dir)
+            passed = process_single_file(f, args, out_dir, excluded_sc=excluded_sc)
             if not passed:
                 all_passed = False
         sys.exit(0 if all_passed else 1)
     else:
-        passed = process_single_file(input_path, args, out_dir)
+        passed = process_single_file(input_path, args, out_dir, excluded_sc=excluded_sc)
         sys.exit(0 if passed else 1)
 
 
