@@ -23,48 +23,71 @@ Part of the document accessibility quartet alongside [docx-a11y](https://github.
 
 ---
 
-## Installation & Launch (macOS, Windows, Linux)
+## Installation
 
-Running `xlsx-a11y` via a Python virtual environment is the **primary, recommended path** for all platforms. It works identically on macOS (Apple Silicon & Intel), Windows, and Linux, providing instant access to both the desktop GUI and the headless CLI.
+### 1. Desktop GUI Application (Pre-built Installers)
+
+Pre-built desktop installers with bundled dependencies (including PySide6/Qt) are available on the [GitHub Releases](https://github.com/ThirstyHead/xlsx-a11y/releases) page:
+
+- **macOS (`.dmg`)**:
+  1. Download `xlsx-a11y-v<version>-macos.dmg` (e.g. `xlsx-a11y-v0.1.0-macos.dmg`).
+  2. Double-click to mount the disk image.
+  3. Drag `xlsx-a11y.app` into `/Applications`.
+  4. Launch `xlsx-a11y` from Spotlight, Launchpad, or the Applications folder.
+  > **Note (macOS Gatekeeper)**: Because `xlsx-a11y` is an open-source binary distributed outside the Mac App Store without paid Apple Developer notarization, macOS blocks first launch with *“Apple could not verify xlsx-a11y is free of malware”*.
+  > - **GUI bypass**: Right-click (or Control-click) `xlsx-a11y.app` in `/Applications`, select **Open**, and click **Open**. Alternatively, go to **System Settings > Privacy & Security**, scroll down to the **Security** section, and click **Open Anyway**.
+  > - **Terminal bypass**: Run `xattr -cr /Applications/xlsx-a11y.app` (or `xattr -d com.apple.quarantine ~/Downloads/xlsx-a11y-*-macos.dmg` before opening the DMG).
+- **Windows (`.exe`)**:
+  1. Download `xlsx-a11y-setup-v<version>.exe` (e.g. `xlsx-a11y-setup-v0.1.0.exe`).
+  2. Run the installer wizard to install into `Program Files` and create Start Menu / Desktop shortcuts.
+- **Linux (`.AppImage`)**:
+  1. Download `xlsx-a11y-v<version>-x86_64.AppImage` (e.g. `xlsx-a11y-v0.1.0-x86_64.AppImage`).
+  2. Make it executable: `chmod +x xlsx-a11y-v*-x86_64.AppImage`.
+  3. Run directly: `./xlsx-a11y-v*-x86_64.AppImage`.
+
+### 2. Standalone Headless CLI Binary (No Python Required)
+
+Single-file headless CLI executables are available on [GitHub Releases](https://github.com/ThirstyHead/xlsx-a11y/releases) for agentic workflows, CI/CD pipelines, and terminal environments:
+
+```bash
+# Example: Download macOS Apple Silicon standalone CLI binary
+curl -LO https://github.com/ThirstyHead/xlsx-a11y/releases/latest/download/xlsx-a11y-cli-macos-arm64
+chmod +x xlsx-a11y-cli-macos-arm64
+sudo mv xlsx-a11y-cli-macos-arm64 /usr/local/bin/xlsx-a11y
+
+# Verify installation
+xlsx-a11y --help
+```
+
+### 3. Ephemeral Execution via `uvx`
+
+Run `xlsx-a11y` instantly in any environment without managing Python virtual environments:
+
+```bash
+# Run headless CLI audit & remediation
+uvx xlsx-a11y spreadsheet.xlsx --fix --format md,html,pdf,json
+
+# Launch desktop GUI ephemerally
+uvx --with "xlsx-a11y[gui]" xlsx-a11y-gui
+```
+
+### 4. Python Package via `pip` or `venv`
 
 Requires **Python >= 3.10**.
 
-### Primary Path: Python Virtual Environment (`venv`)
-
-#### On macOS & Linux:
+#### Development Virtual Environment (`venv`)
 
 ```bash
-# 1. Clone and enter the repository
+# Clone and enter repository
 git clone https://github.com/ThirstyHead/xlsx-a11y.git
 cd xlsx-a11y
 
-# 2. Create and activate a virtual environment
+# Create and activate virtual environment
 python3 -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate  # On Windows: .venv\Scripts\Activate.ps1
 
-# 3. Install the application with GUI support
-pip install -e ".[gui]"
-
-# 4. Launch the Desktop GUI
-xlsx-a11y-gui
-```
-
-#### On Windows (PowerShell):
-
-```powershell
-# 1. Clone and enter the repository
-git clone https://github.com/ThirstyHead/xlsx-a11y.git
-cd xlsx-a11y
-
-# 2. Create and activate a virtual environment
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-
-# 3. Install the application with GUI support
-pip install -e ".[gui]"
-
-# 4. Launch the Desktop GUI
-xlsx-a11y-gui
+# Install with all dependencies
+pip install -e ".[all]"
 ```
 
 ---
