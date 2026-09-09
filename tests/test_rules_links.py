@@ -1,6 +1,6 @@
 """Tests for vague hyperlink text rules."""
 import openpyxl
-from xslx_a11y.rules import check_hyperlinks
+from xlsx_a11y.rules import check_hyperlinks
 
 
 def test_vague_link_text():

@@ -1,7 +1,7 @@
 """Tests for audit orchestrator."""
 from pathlib import Path
 import openpyxl
-from xslx_a11y.audit import audit_workbook, audit_file
+from xlsx_a11y.audit import audit_workbook, audit_file
 
 
 def test_audit_workbook_clean():

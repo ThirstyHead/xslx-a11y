@@ -3,8 +3,8 @@ from pathlib import Path
 from typing import Any, Callable, Optional, Union
 import openpyxl
 
-from xslx_a11y.audit import audit_file
-from xslx_a11y.immutability import calculate_sha256, verify_immutability
+from xlsx_a11y.audit import audit_file
+from xlsx_a11y.immutability import calculate_sha256, verify_immutability
 
 
 def run_interactive_triage(
@@ -33,7 +33,7 @@ def run_interactive_triage(
     findings = audit_res.get("findings", [])
 
     items_triaged = 0
-    print_func(f"\n=== xslx-a11y Interactive Accessibility Triage: {in_p.name} ===\n")
+    print_func(f"\n=== xlsx-a11y Interactive Accessibility Triage: {in_p.name} ===\n")
 
     for f in findings:
         rule_id = f.rule_id if hasattr(f, "rule_id") else f.get("rule_id", "")

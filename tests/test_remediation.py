@@ -2,8 +2,8 @@
 from pathlib import Path
 import openpyxl
 import pytest
-from xslx_a11y.immutability import calculate_sha256
-from xslx_a11y.remediate import remediate_file, remediate_workbook
+from xlsx_a11y.immutability import calculate_sha256
+from xlsx_a11y.remediate import remediate_file, remediate_workbook
 
 
 def test_remediate_workbook_fixes_title_merged_and_tables():

@@ -1,4 +1,4 @@
-"""xslx-a11y CLI entry point."""
+"""xlsx-a11y CLI entry point."""
 import argparse
 from pathlib import Path
 import sys
@@ -10,13 +10,13 @@ from engine_a11y.criteria_config import (
     load_criteria_config,
 )
 from engine_a11y.findings import summarize
-from xslx_a11y.audit import audit_file, audit_result_to_json
-from xslx_a11y.remediate import remediate_file
-from xslx_a11y.reports.html import render_html
-from xslx_a11y.reports.md import render_md
-from xslx_a11y.reports.pdf import render_pdf
-from xslx_a11y.reports.theme import available_themes
-from xslx_a11y.triage import run_interactive_triage
+from xlsx_a11y.audit import audit_file, audit_result_to_json
+from xlsx_a11y.remediate import remediate_file
+from xlsx_a11y.reports.html import render_html
+from xlsx_a11y.reports.md import render_md
+from xlsx_a11y.reports.pdf import render_pdf
+from xlsx_a11y.reports.theme import available_themes
+from xlsx_a11y.triage import run_interactive_triage
 
 
 def process_single_file(
@@ -49,7 +49,7 @@ def process_single_file(
         fixed_xlsx = Path(args.out_xlsx) if args.out_xlsx else out_dir / f"{stem}-remediated.xlsx"
         if fixed_xlsx.resolve() == target_path.resolve():
             print(
-                "Error: --out-xlsx cannot match input document. xslx-a11y strictly guarantees "
+                "Error: --out-xlsx cannot match input document. xlsx-a11y strictly guarantees "
                 "that original files remain untouched and immutable.",
                 file=sys.stderr,
             )
@@ -102,7 +102,7 @@ def process_single_file(
 
 def main(argv: Optional[List[str]] = None) -> None:
     parser = argparse.ArgumentParser(
-        prog="xslx-a11y",
+        prog="xlsx-a11y",
         description="Audit and remediate Microsoft Excel .xlsx workbooks against WCAG 2.1 AA standards.",
     )
     parser.add_argument("file", nargs="?", default=None, help="Path to .xlsx file or folder")
@@ -143,11 +143,11 @@ def main(argv: Optional[List[str]] = None) -> None:
 
     if args.gui:
         try:
-            from xslx_a11y.gui.app import main as gui_main
+            from xlsx_a11y.gui.app import main as gui_main
             gui_main()
             sys.exit(0)
         except (ImportError, ModuleNotFoundError) as e:
-            print(f"Error: GUI dependencies not installed. Run 'pip install xslx-a11y[gui]'. ({e})", file=sys.stderr)
+            print(f"Error: GUI dependencies not installed. Run 'pip install xlsx-a11y[gui]'. ({e})", file=sys.stderr)
             sys.exit(2)
 
     if not args.file:

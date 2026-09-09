@@ -14,7 +14,7 @@ import openpyxl
 from openpyxl.utils import get_column_letter
 import wcag_contrast_ratio
 
-from xslx_a11y.findings import Finding
+from xlsx_a11y.findings import Finding
 
 VAGUE_LINK_TEXTS = {
     "click here",

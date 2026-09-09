@@ -7,7 +7,7 @@ from openpyxl.drawing.text import CharacterProperties
 from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.worksheet.table import Table, TableStyleInfo
 
-from xslx_a11y.remediate import ensure_drawing_alt_texts
+from xlsx_a11y.remediate import ensure_drawing_alt_texts
 
 EXAMPLES_DIR = Path(__file__).resolve().parent.parent / "examples"
 EXAMPLES_DIR.mkdir(exist_ok=True)

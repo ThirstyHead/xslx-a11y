@@ -1,7 +1,7 @@
 """Tests for interactive triage workflow."""
 from pathlib import Path
 import openpyxl
-from xslx_a11y.triage import run_interactive_triage
+from xlsx_a11y.triage import run_interactive_triage
 
 
 def test_interactive_triage_terminal(tmp_path: Path):

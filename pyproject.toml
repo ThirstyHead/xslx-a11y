@@ -3,13 +3,13 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "xslx-a11y"
+name = "xlsx-a11y"
 version = "0.1.0"
 description = "Audit and remediate Microsoft Excel .xlsx workbooks against WCAG 2.1 AA (headless, deterministic)"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
-authors = [{ name = "xslx-a11y contributors" }]
+authors = [{ name = "xlsx-a11y contributors" }]
 keywords = ["accessibility", "wcag", "excel", "xlsx", "ooxml", "audit", "remediation"]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -47,25 +47,23 @@ dev = [
     "pytest-qt>=4.4.0",
 ]
 all = [
-    "xslx-a11y[dev,gui]",
+    "xlsx-a11y[dev,gui]",
 ]
 
 [project.scripts]
-xslx-a11y = "xslx_a11y.cli:main"
-xslx-a11y-gui = "xslx_a11y.gui.app:main"
-xlsx-a11y = "xslx_a11y.cli:main"
-xlsx-a11y-gui = "xslx_a11y.gui.app:main"
+xlsx-a11y = "xlsx_a11y.cli:main"
+xlsx-a11y-gui = "xlsx_a11y.gui.app:main"
 
 [project.urls]
-Homepage = "https://github.com/ThirstyHead/xslx-a11y"
-Repository = "https://github.com/ThirstyHead/xslx-a11y.git"
-Issues = "https://github.com/ThirstyHead/xslx-a11y/issues"
+Homepage = "https://github.com/ThirstyHead/xlsx-a11y"
+Repository = "https://github.com/ThirstyHead/xlsx-a11y.git"
+Issues = "https://github.com/ThirstyHead/xlsx-a11y/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-xslx_a11y = [
+xlsx_a11y = [
     "sc_cache.json",
     "reports/themes/**/*.css",
     "reports/themes/**/*.json",

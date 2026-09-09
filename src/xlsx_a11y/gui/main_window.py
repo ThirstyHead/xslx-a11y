@@ -1,4 +1,4 @@
-"""Main dashboard window for xslx-a11y desktop application."""
+"""Main dashboard window for xlsx-a11y desktop application."""
 from pathlib import Path
 from typing import List, Optional
 from PySide6.QtGui import QDragEnterEvent, QDropEvent
@@ -21,18 +21,18 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from xslx_a11y.audit import audit_file
-from xslx_a11y.gui.models import BatchItem, BatchQueue
-from xslx_a11y.gui.theme import APP_STYLESHEET
-from xslx_a11y.gui.triage_dialog import TriageDialog
-from xslx_a11y.gui.worker import BatchWorker
-from xslx_a11y.reports.theme import available_themes
+from xlsx_a11y.audit import audit_file
+from xlsx_a11y.gui.models import BatchItem, BatchQueue
+from xlsx_a11y.gui.theme import APP_STYLESHEET
+from xlsx_a11y.gui.triage_dialog import TriageDialog
+from xlsx_a11y.gui.worker import BatchWorker
+from xlsx_a11y.reports.theme import available_themes
 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("xslx-a11y: Excel WCAG Accessibility Remediation")
+        self.setWindowTitle("xlsx-a11y: Excel WCAG Accessibility Remediation")
         self.resize(960, 680)
         self.setStyleSheet(APP_STYLESHEET)
         self.setAcceptDrops(True)
@@ -94,7 +94,7 @@ class MainWindow(QMainWindow):
         out_dir_layout = QHBoxLayout()
         out_dir_layout.addWidget(QLabel("Output Directory:"))
         docs_dir = Path.home() / "Documents"
-        default_out = (docs_dir if docs_dir.is_dir() else Path.home()) / "xslx-a11y-output"
+        default_out = (docs_dir if docs_dir.is_dir() else Path.home()) / "xlsx-a11y-output"
         self.txt_out_dir = QLineEdit(str(default_out))
         self.btn_browse_out = QPushButton("Browse...")
         self.btn_browse_out.clicked.connect(self.browse_output_dir)

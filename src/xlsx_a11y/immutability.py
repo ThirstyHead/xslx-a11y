@@ -36,7 +36,7 @@ def assert_not_same_path(src: Union[str, Path], dest: Union[str, Path]) -> None:
     dest_p = Path(dest).resolve()
     if src_p == dest_p:
         raise ValueError(
-            f"Destination {dest_p} matches source {src_p}; xslx-a11y strictly guarantees "
+            f"Destination {dest_p} matches source {src_p}; xlsx-a11y strictly guarantees "
             "that original files remain untouched. Specify a distinct output path."
         )
 

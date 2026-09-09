@@ -1,7 +1,7 @@
 """Tests for GUI batch models."""
 from pathlib import Path
 import openpyxl
-from xslx_a11y.gui.models import BatchItem, BatchQueue
+from xlsx_a11y.gui.models import BatchItem, BatchQueue
 
 
 def test_batch_queue_add_and_deduplicate(tmp_path: Path):

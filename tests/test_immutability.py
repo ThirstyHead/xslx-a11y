@@ -2,7 +2,7 @@
 import hashlib
 from pathlib import Path
 import pytest
-from xslx_a11y.immutability import (
+from xlsx_a11y.immutability import (
     calculate_sha256,
     verify_immutability,
     get_remediated_path,

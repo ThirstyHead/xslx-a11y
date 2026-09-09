@@ -1,4 +1,4 @@
-"""Canonical Markdown report renderer for xslx-a11y.
+"""Canonical Markdown report renderer for xlsx-a11y.
 
 Delegates to engine_a11y.reports.md with xlsx document profile and Excel assistant notes.
 """
@@ -6,8 +6,8 @@ from typing import Any, Dict, Optional, Set
 from engine_a11y.profile import get_xlsx_profile
 from engine_a11y.reports.md import render_md as _engine_render_md
 from engine_a11y.reports.tone import WORD_ASSISTANT_NOTES
-from xslx_a11y import __version__
-from xslx_a11y.reports.tone import EXCEL_ASSISTANT_NOTES
+from xlsx_a11y import __version__
+from xlsx_a11y.reports.tone import EXCEL_ASSISTANT_NOTES
 
 
 def render_md(
@@ -20,7 +20,7 @@ def render_md(
     """Render canonical Markdown accessibility audit report."""
     active_profile = profile or get_xlsx_profile()
     result_copy = dict(result)
-    result_copy.setdefault("tool", f"xslx-a11y/{__version__}")
+    result_copy.setdefault("tool", f"xlsx-a11y/{__version__}")
     md = _engine_render_md(
         result=result_copy,
         after_result=after_result,

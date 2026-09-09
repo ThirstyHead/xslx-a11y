@@ -1,4 +1,4 @@
-"""Accessible Qt stylesheet and color tokens for xslx-a11y GUI.
+"""Accessible Qt stylesheet and color tokens for xlsx-a11y GUI.
 
 Delegates to engine_a11y.gui.theme.
 """

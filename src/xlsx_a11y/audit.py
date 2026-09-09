@@ -4,9 +4,9 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Union
 import openpyxl
 
-from xslx_a11y.findings import Finding, findings_sorted, summarize
-from xslx_a11y.immutability import calculate_sha256
-from xslx_a11y.rules import audit_rules
+from xlsx_a11y.findings import Finding, findings_sorted, summarize
+from xlsx_a11y.immutability import calculate_sha256
+from xlsx_a11y.rules import audit_rules
 
 
 def audit_workbook(

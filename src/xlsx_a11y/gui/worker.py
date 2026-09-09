@@ -4,12 +4,12 @@ from typing import List, Union
 import openpyxl
 from PySide6.QtCore import QThread, Signal
 
-from xslx_a11y.audit import audit_file, audit_result_to_json
-from xslx_a11y.gui.models import BatchItem
-from xslx_a11y.remediate import remediate_file
-from xslx_a11y.reports.html import render_html
-from xslx_a11y.reports.md import render_md
-from xslx_a11y.reports.pdf import render_pdf
+from xlsx_a11y.audit import audit_file, audit_result_to_json
+from xlsx_a11y.gui.models import BatchItem
+from xlsx_a11y.remediate import remediate_file
+from xlsx_a11y.reports.html import render_html
+from xlsx_a11y.reports.md import render_md
+from xlsx_a11y.reports.pdf import render_pdf
 
 
 class BatchWorker(QThread):

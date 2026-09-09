@@ -1,8 +1,8 @@
-"""End-to-end tests for xslx-a11y CLI."""
+"""End-to-end tests for xlsx-a11y CLI."""
 from pathlib import Path
 import openpyxl
 import pytest
-from xslx_a11y.cli import main
+from xlsx_a11y.cli import main
 
 
 def test_cli_missing_file():

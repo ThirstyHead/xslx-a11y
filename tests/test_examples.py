@@ -1,8 +1,8 @@
 """Regression tests for example workbooks."""
 from pathlib import Path
-from xslx_a11y.audit import audit_file
-from xslx_a11y.immutability import calculate_sha256
-from xslx_a11y.remediate import remediate_file
+from xlsx_a11y.audit import audit_file
+from xlsx_a11y.immutability import calculate_sha256
+from xlsx_a11y.remediate import remediate_file
 
 EXAMPLES_DIR = Path(__file__).resolve().parent.parent / "examples"
 

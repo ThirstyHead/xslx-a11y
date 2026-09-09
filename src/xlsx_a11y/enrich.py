@@ -4,7 +4,7 @@ from pathlib import Path
 import re
 from typing import Any, Dict, List, Optional
 
-from xslx_a11y.findings import Finding
+from xlsx_a11y.findings import Finding
 
 BUNDLED_CACHE = Path(__file__).resolve().parent / "sc_cache.json"
 
