@@ -1,6 +1,6 @@
 """Tests for workbook structure rules (default names, empty sheets, merged cells)."""
 import openpyxl
-from xslx_a11y.rules import (
+from xlsx_a11y.rules import (
     check_sheet_names,
     check_empty_sheets,
     check_merged_cells,

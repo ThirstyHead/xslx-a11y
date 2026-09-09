@@ -29,17 +29,17 @@ jobs:
       - name: Run test suite with coverage
         env:
           QT_QPA_PLATFORM: offscreen
-        run: python -m pytest tests/ --cov=xslx_a11y -q
+        run: python -m pytest tests/ --cov=xlsx_a11y -q
       - name: Smoke CLI
         env:
           QT_QPA_PLATFORM: offscreen
         run: |
           mkdir -p /tmp/smoke
-          xslx-a11y examples/Financial-Summary.xlsx --format md,html,pdf,json --output-dir /tmp/smoke
+          xlsx-a11y examples/Financial-Summary.xlsx --format md,html,pdf,json --output-dir /tmp/smoke
           test -f /tmp/smoke/Financial-Summary-a11y-report.md
           test -f /tmp/smoke/Financial-Summary-a11y-report.html
           test -f /tmp/smoke/Financial-Summary-a11y-report.pdf
           test -f /tmp/smoke/Financial-Summary-audit.json
-          xslx-a11y examples/Financial-Summary-test.xlsx --fix --out-xlsx /tmp/smoke/remediated.xlsx --format md,html,pdf,json --output-dir /tmp/smoke || true
+          xlsx-a11y examples/Financial-Summary-test.xlsx --fix --out-xlsx /tmp/smoke/remediated.xlsx --format md,html,pdf,json --output-dir /tmp/smoke || true
           test -f /tmp/smoke/remediated.xlsx
           test -f /tmp/smoke/Financial-Summary-test-a11y-report.pdf

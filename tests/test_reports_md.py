@@ -1,5 +1,5 @@
 """Tests for canonical Markdown report generation."""
-from xslx_a11y.reports.md import render_md
+from xlsx_a11y.reports.md import render_md
 
 
 def test_render_md_basic():

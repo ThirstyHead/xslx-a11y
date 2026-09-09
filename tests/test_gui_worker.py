@@ -1,8 +1,8 @@
 """Tests for GUI batch worker thread."""
 from pathlib import Path
 import openpyxl
-from xslx_a11y.gui.models import BatchItem
-from xslx_a11y.gui.worker import BatchWorker
+from xlsx_a11y.gui.models import BatchItem
+from xlsx_a11y.gui.worker import BatchWorker
 
 
 def test_batch_worker_run(tmp_path: Path, qtbot):

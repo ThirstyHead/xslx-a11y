@@ -1,6 +1,6 @@
 """Tests for report enrichment and WCAG guidance."""
-from xslx_a11y.enrich import get_criterion_text, enrich_finding
-from xslx_a11y.findings import Finding
+from xlsx_a11y.enrich import get_criterion_text, enrich_finding
+from xlsx_a11y.findings import Finding
 
 
 def test_get_criterion_text():

@@ -11,13 +11,13 @@ from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.table import Table, TableStyleInfo
 import wcag_contrast_ratio  # type: ignore
 
-from xslx_a11y.immutability import (
+from xlsx_a11y.immutability import (
     assert_not_same_path,
     calculate_sha256,
     get_remediated_path,
     verify_immutability,
 )
-from xslx_a11y.rules import _is_coord_in_table, hex_to_rgb_tuple, is_red_color
+from xlsx_a11y.rules import _is_coord_in_table, hex_to_rgb_tuple, is_red_color
 
 
 def _sanitize_table_name(name: str) -> str:

@@ -1,7 +1,7 @@
 """Tests for table headers and structured data rules."""
 import openpyxl
 from openpyxl.worksheet.table import Table, TableStyleInfo
-from xslx_a11y.rules import check_table_headers
+from xlsx_a11y.rules import check_table_headers
 
 
 def test_table_header_missing_when_raw_data_block():

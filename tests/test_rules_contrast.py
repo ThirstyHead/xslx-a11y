@@ -1,7 +1,7 @@
 """Tests for color contrast rules in worksheets."""
 import openpyxl
 from openpyxl.styles import Font, PatternFill
-from xslx_a11y.rules import check_color_contrast, check_red_formatting
+from xlsx_a11y.rules import check_color_contrast, check_red_formatting
 
 
 def test_contrast_failure_light_gray_on_white():

@@ -1,8 +1,8 @@
 """Tests for accessible PDF report generation."""
 from pathlib import Path
 import pikepdf
-from xslx_a11y.reports.html import render_html
-from xslx_a11y.reports.pdf import render_pdf
+from xlsx_a11y.reports.html import render_html
+from xlsx_a11y.reports.pdf import render_pdf
 
 
 def test_render_pdf_tags_and_lang(tmp_path: Path):

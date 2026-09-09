@@ -1,6 +1,6 @@
 """Tests for workbook metadata rules (e.g. title-missing)."""
 import openpyxl
-from xslx_a11y.rules import check_workbook_title
+from xlsx_a11y.rules import check_workbook_title
 
 
 def test_title_missing_when_empty():

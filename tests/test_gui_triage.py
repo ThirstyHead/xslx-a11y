@@ -1,8 +1,8 @@
 """Tests for interactive GUI triage dialog."""
 from pathlib import Path
 import openpyxl
-from xslx_a11y.findings import Finding
-from xslx_a11y.gui.triage_dialog import TriageDialog
+from xlsx_a11y.findings import Finding
+from xlsx_a11y.gui.triage_dialog import TriageDialog
 
 
 def test_triage_dialog_flow(tmp_path: Path, qtbot):

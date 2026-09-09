@@ -1,5 +1,5 @@
 """Tests for Finding data structure and summary calculations."""
-from xslx_a11y.findings import Finding, SEVERITY_ORDER, BLOCKING, summarize, findings_sorted, finding_to_jsonable
+from xlsx_a11y.findings import Finding, SEVERITY_ORDER, BLOCKING, summarize, findings_sorted, finding_to_jsonable
 
 
 def test_finding_instantiation_and_dict():

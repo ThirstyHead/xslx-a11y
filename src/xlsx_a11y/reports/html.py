@@ -20,7 +20,7 @@ def render_html(
         lang=lang,
         config_dir=str(config_dir) if config_dir else None,
     )
-    return html.replace("/* docx-a11y theme:", "/* xslx-a11y theme:")
+    return html.replace("/* docx-a11y theme:", "/* xlsx-a11y theme:")
 
 
 __all__ = ["render_html"]

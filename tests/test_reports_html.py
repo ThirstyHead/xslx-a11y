@@ -1,5 +1,5 @@
 """Tests for HTML report rendering."""
-from xslx_a11y.reports.html import render_html
+from xlsx_a11y.reports.html import render_html
 
 
 def test_render_html_structure():
@@ -16,4 +16,4 @@ def test_render_html_structure():
     assert '<nav class="toc"' in html
     assert '<main id="main"' in html
     assert 'class="finding"' in html
-    assert "xslx-a11y theme: ocean" in html
+    assert "xlsx-a11y theme: ocean" in html

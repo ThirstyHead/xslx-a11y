@@ -1,8 +1,8 @@
-"""Tests for criteria checklist CLI flags in xslx-a11y (--init-criteria and --criteria)."""
+"""Tests for criteria checklist CLI flags in xlsx-a11y (--init-criteria and --criteria)."""
 from pathlib import Path
 import openpyxl
 import pytest
-from xslx_a11y.cli import main
+from xlsx_a11y.cli import main
 
 
 def test_cli_init_criteria(tmp_path: Path):

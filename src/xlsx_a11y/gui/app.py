@@ -1,9 +1,9 @@
-"""Application launcher for xslx-a11y desktop GUI."""
+"""Application launcher for xlsx-a11y desktop GUI."""
 import sys
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication
 
-from xslx_a11y.gui.main_window import MainWindow
+from xlsx_a11y.gui.main_window import MainWindow
 
 
 def main():
@@ -13,7 +13,7 @@ def main():
     )
 
     app = QApplication(sys.argv)
-    app.setApplicationName("xslx-a11y")
+    app.setApplicationName("xlsx-a11y")
     app.setOrganizationName("ThirstyHead")
 
     window = MainWindow()

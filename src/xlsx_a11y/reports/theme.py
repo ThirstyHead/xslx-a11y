@@ -10,7 +10,7 @@ from engine_a11y.reports.theme import (
     theme_css as _engine_theme_css,
 )
 
-DEFAULT_USER_CONFIG_DIR = Path.home() / ".config" / "xslx-a11y"
+DEFAULT_USER_CONFIG_DIR = Path.home() / ".config" / "xlsx-a11y"
 
 
 def available_themes(config_dir: Optional[Union[str, Path]] = None) -> List[Dict[str, Any]]:
@@ -21,7 +21,7 @@ def available_themes(config_dir: Optional[Union[str, Path]] = None) -> List[Dict
 def theme_css(name: str = "light", config_dir: Optional[Union[str, Path]] = None) -> str:
     target_config = config_dir if config_dir else DEFAULT_USER_CONFIG_DIR
     css = _engine_theme_css(name=name, config_dir=target_config)
-    return css.replace("/* docx-a11y theme:", "/* xslx-a11y theme:")
+    return css.replace("/* docx-a11y theme:", "/* xlsx-a11y theme:")
 
 
 __all__ = [

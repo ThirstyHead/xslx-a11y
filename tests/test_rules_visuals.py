@@ -3,7 +3,7 @@ import openpyxl
 from openpyxl.chart import BarChart, Reference
 from openpyxl.drawing.image import Image
 from PIL import Image as PILImage
-from xslx_a11y.rules import check_images_alt, check_charts_alt
+from xlsx_a11y.rules import check_images_alt, check_charts_alt
 
 
 def test_chart_alt_missing_when_no_title(tmp_path):
