@@ -33,6 +33,9 @@ def test_barrier_financial_summary_audit_and_remediate(tmp_path: Path):
     assert "sheet-name-default" in rule_ids
     assert "merged-cell" in rule_ids
     assert "chart-alt-missing" in rule_ids
+    assert "color-contrast" in rule_ids
+    assert "color-use-red" in rule_ids
+    assert "table-header-missing" in rule_ids
 
     # Remediate to temporary destination
     sha_before = calculate_sha256(test_p)
@@ -49,4 +52,9 @@ def test_barrier_financial_summary_audit_and_remediate(tmp_path: Path):
 
     # Verify deterministic barriers resolved
     assert "title-missing" not in rem_rule_ids
+    assert "sheet-name-default" not in rem_rule_ids
     assert "merged-cell" not in rem_rule_ids
+    assert "table-header-missing" not in rem_rule_ids
+    assert "color-contrast" not in rem_rule_ids
+    assert "color-use-red" not in rem_rule_ids
+    assert rem_audit["summary"]["pass"] is True

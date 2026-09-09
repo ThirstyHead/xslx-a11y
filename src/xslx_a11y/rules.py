@@ -386,6 +386,63 @@ def check_hyperlinks(wb: openpyxl.Workbook) -> List[Finding]:
     return findings
 
 
+def is_red_color(rgb_str: str) -> bool:
+    """Checks if a hex color is predominantly red (WCAG 1.4.1 / Excel 'Avoid red formatting')."""
+    if not rgb_str or len(rgb_str) < 6:
+        return False
+    hex_clean = rgb_str[-6:].upper()
+    try:
+        r = int(hex_clean[0:2], 16)
+        g = int(hex_clean[2:4], 16)
+        b = int(hex_clean[4:6], 16)
+    except ValueError:
+        return False
+    return r >= 150 and g <= 85 and b <= 85
+
+
+def check_red_formatting(wb: openpyxl.Workbook) -> List[Finding]:
+    """WCAG 1.4.1: Flags cells using red formatting alone to convey meaning (Excel 'Avoid red formatting')."""
+    findings = []
+    for ws in wb.worksheets:
+        for row in ws.iter_rows(values_only=False):
+            for cell in row:
+                if cell.value is None or str(cell.value).strip() == "":
+                    continue
+
+                evidence = []
+                if cell.font and cell.font.color and cell.font.color.rgb:
+                    c_str = str(cell.font.color.rgb)
+                    if is_red_color(c_str):
+                        evidence.append(f"Red font color #{c_str[-6:]}")
+
+                if cell.fill and cell.fill.fill_type and cell.fill.fgColor and cell.fill.fgColor.rgb:
+                    fill_str = str(cell.fill.fgColor.rgb)
+                    if is_red_color(fill_str):
+                        evidence.append(f"Red fill color #{fill_str[-6:]}")
+
+                fmt = str(getattr(cell, "number_format", "") or "")
+                if "[Red]" in fmt or "[red]" in fmt:
+                    evidence.append(f"Number format specifies red color: '{fmt}'")
+
+                if evidence:
+                    findings.append(
+                        Finding(
+                            rule_id="color-use-red",
+                            sc="1.4.1",
+                            severity="moderate",
+                            location=f"{ws.title}!{cell.coordinate}",
+                            description=(
+                                f"Avoid red formatting: Cell '{cell.coordinate}' uses red formatting "
+                                "which is unperceivable to color-blind users without additional text/symbol indicators"
+                            ),
+                            evidence="; ".join(evidence),
+                            fixable=True,
+                            fix="Remove red color dependency, use neutral high-contrast formatting, and include explicit text/symbol indicators (e.g. minus sign, parentheses)",
+                        )
+                    )
+    return findings
+
+
 ALL_RULES = [
     check_workbook_title,
     check_sheet_names,
@@ -395,6 +452,7 @@ ALL_RULES = [
     check_charts_alt,
     check_images_alt,
     check_color_contrast,
+    check_red_formatting,
     check_hyperlinks,
 ]
 

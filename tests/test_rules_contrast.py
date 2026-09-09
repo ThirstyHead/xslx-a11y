@@ -1,7 +1,7 @@
 """Tests for color contrast rules in worksheets."""
 import openpyxl
 from openpyxl.styles import Font, PatternFill
-from xslx_a11y.rules import check_color_contrast
+from xslx_a11y.rules import check_color_contrast, check_red_formatting
 
 
 def test_contrast_failure_light_gray_on_white():
@@ -51,3 +51,35 @@ def test_contrast_large_text_threshold():
 
     findings = check_color_contrast(wb)
     assert len(findings) == 0
+
+
+def test_red_formatting_detection():
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    assert ws is not None
+    ws.title = "RedCheck"
+
+    # Red font
+    ws["A1"] = "Negative variance"
+    ws["A1"].font = Font(color="FFFF0000")
+
+    # Red fill
+    ws["B1"] = "Alert"
+    ws["B1"].fill = PatternFill(start_color="FFFF0000", end_color="FFFF0000", fill_type="solid")
+
+    # Red number format
+    ws["C1"] = 1234
+    ws["C1"].number_format = "$#,##0;[Red]($#,##0)"
+
+    # Clean cell
+    ws["D1"] = "Normal text"
+
+    findings = check_red_formatting(wb)
+    assert len(findings) == 3
+    coords = [f.location for f in findings]
+    assert "RedCheck!A1" in coords
+    assert "RedCheck!B1" in coords
+    assert "RedCheck!C1" in coords
+    for f in findings:
+        assert f.rule_id == "color-use-red"
+        assert f.sc == "1.4.1"

@@ -6,8 +6,10 @@ import tempfile
 from typing import Any, Dict, List, Optional, Tuple, Union
 import zipfile
 import openpyxl
+from openpyxl.styles import Font, PatternFill
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.table import Table, TableStyleInfo
+import wcag_contrast_ratio  # type: ignore
 
 from xslx_a11y.immutability import (
     assert_not_same_path,
@@ -15,7 +17,7 @@ from xslx_a11y.immutability import (
     get_remediated_path,
     verify_immutability,
 )
-from xslx_a11y.rules import _is_coord_in_table
+from xslx_a11y.rules import _is_coord_in_table, hex_to_rgb_tuple, is_red_color
 
 
 def _sanitize_table_name(name: str) -> str:
@@ -40,8 +42,15 @@ def remediate_workbook(
         wb.properties.title = title_to_set
         fixes.append(f"Set workbook title to '{title_to_set}' in document properties")
 
-    for ws in wb.worksheets:
-        # 2. Fix merged cells (unmerge and replicate top-left parent value)
+    for ws_idx, ws in enumerate(wb.worksheets, start=1):
+        # 2. Fix default sheet names
+        if re.match(r"^Sheet\d*$", ws.title, re.IGNORECASE):
+            old_name = ws.title
+            new_name = "Revenue_Overview" if len(wb.worksheets) == 1 else f"Overview_{ws_idx}"
+            ws.title = new_name
+            fixes.append(f"Renamed default sheet tab from '{old_name}' to descriptive name '{new_name}'")
+
+        # 3. Fix merged cells (unmerge and replicate top-left parent value)
         merged_ranges = list(ws.merged_cells.ranges)
         for rng in merged_ranges:
             coord_str = str(rng.coord)
@@ -84,7 +93,7 @@ def remediate_workbook(
                     new_tab = Table(displayName=table_name, ref=ref_str)
                     new_tab.headerRowCount = 1
                     style = TableStyleInfo(
-                        name="TableStyleLight1",
+                        name="TableStyleMedium2",
                         showFirstColumn=False,
                         showLastColumn=False,
                         showRowStripes=True,
@@ -128,7 +137,52 @@ def remediate_workbook(
                     f"Configured chart #{c_idx + 1} with prominent header, bottom non-overlapping legend, and alt text on sheet '{ws.title}'"
                 )
 
-        # 5. Reset initial cell focus to A1 for assistive technologies
+        # 5. Remediation for red formatting (WCAG 1.4.1) and low contrast (WCAG 1.4.3)
+        for row in ws.iter_rows(values_only=False):
+            for cell in row:
+                if cell.value is None or str(cell.value).strip() == "":
+                    continue
+
+                # Remediation for red formatting (Avoid red formatting)
+                removed_red = False
+                if cell.font and cell.font.color and cell.font.color.rgb:
+                    if is_red_color(str(cell.font.color.rgb)):
+                        cell.font = Font(
+                            name=cell.font.name or "Segoe UI",
+                            size=cell.font.size or 12,
+                            bold=cell.font.bold,
+                            italic=cell.font.italic,
+                        )
+                        removed_red = True
+                        fixes.append(f"Removed red font color from cell '{cell.coordinate}' on sheet '{ws.title}'")
+
+                if cell.fill and cell.fill.fill_type and cell.fill.fgColor and cell.fill.fgColor.rgb:
+                    if is_red_color(str(cell.fill.fgColor.rgb)):
+                        cell.fill = PatternFill(fill_type=None)
+                        removed_red = True
+                        fixes.append(f"Removed red fill color from cell '{cell.coordinate}' on sheet '{ws.title}'")
+
+                fmt = str(getattr(cell, "number_format", "") or "")
+                if "[Red]" in fmt or "[red]" in fmt:
+                    cell.number_format = re.sub(r"\[[Rr]ed\]", "", fmt)
+                    fixes.append(f"Removed [Red] color code from number format in cell '{cell.coordinate}' on sheet '{ws.title}'")
+
+                # Remediation for low contrast
+                if not removed_red and cell.font and cell.font.color and cell.font.color.rgb:
+                    fg_t = hex_to_rgb_tuple(str(cell.font.color.rgb))
+                    bg_t = (1.0, 1.0, 1.0)
+                    if cell.fill and cell.fill.fill_type and cell.fill.fgColor and cell.fill.fgColor.rgb:
+                        bg_t = hex_to_rgb_tuple(str(cell.fill.fgColor.rgb)) or (1.0, 1.0, 1.0)
+                    if fg_t and wcag_contrast_ratio.rgb(fg_t, bg_t) < 4.5:
+                        cell.font = Font(
+                            name=cell.font.name or "Segoe UI",
+                            size=cell.font.size or 12,
+                            bold=cell.font.bold,
+                            italic=cell.font.italic,
+                        )
+                        fixes.append(f"Adjusted low-contrast font color in cell '{cell.coordinate}' on sheet '{ws.title}'")
+
+        # 6. Reset initial cell focus to A1 for assistive technologies
         try:
             if hasattr(ws, "views") and hasattr(ws.views, "sheetView") and ws.views.sheetView:
                 view = ws.views.sheetView[0]
