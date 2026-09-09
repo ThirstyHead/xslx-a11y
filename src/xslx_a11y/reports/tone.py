@@ -69,19 +69,27 @@ RULE_BARRIER_EXPLANATIONS = {
 
 EXCEL_ASSISTANT_NOTES = {
     "merged-cell": (
-        "Microsoft Excel's built-in Accessibility Checker permits merged cells if they do not contain complex "
-        "formulas, but assistive technologies lose coordinate association and cannot reliably calculate cell spans. "
-        "Under WCAG 2.1 SC 1.3.1, all data cells must maintain unmerged tabular coordinates."
+        "Microsoft Excel's built-in Accessibility Assistant routinely overlooks merged cells in title banners or "
+        "standalone ranges outside formal tables unless they disrupt active calculation ranges or table objects. "
+        "Regardless of whether Excel warns, merged cells break the expected two-dimensional coordinate system in "
+        "screen readers, causing assistive technology to skip or misread row/column associations (WCAG 2.1 SC 1.3.1)."
     ),
     "table-header-missing": (
-        "Microsoft Excel's built-in Accessibility Checker frequently passes raw data ranges that visually appear as "
-        "tables if no formal table object exists. Under WCAG 2.1 SC 1.3.1, data ranges require formal Excel Table "
-        "(ListObject) markup with headerRowCount=1 so assistive technologies can announce column identities."
+        "Microsoft Excel's built-in Accessibility Assistant only validates formal Table objects (ListObject), "
+        "silently passing unformatted tabular cell ranges on single-sheet or smaller workbooks even when they "
+        "represent complex data grids. Under WCAG 2.1 SC 1.3.1, every data table requires explicit programmatic "
+        "column headers so screen readers can announce header context as users navigate between cells."
     ),
     "sheet-name-default": (
-        "Microsoft Excel's built-in Accessibility Checker checks for default sheet names like 'Sheet1' in recent "
+        "Microsoft Excel's built-in Accessibility Assistant checks for default sheet names like 'Sheet1' in recent "
         "Microsoft 365 versions, but silently passes them in older desktop versions and template files. WCAG 2.1 "
         "SC 2.4.6 requires descriptive headings and labels across all user environments."
+    ),
+    "color-contrast": (
+        "Microsoft Excel's built-in Accessibility Assistant inspects color contrast against expected cell fill layers, "
+        "and can report persistent warnings when white text is placed on dark table styles if cell-level fills override "
+        "theme defaults. Under WCAG 2.1 SC 1.4.3, high-contrast dark text on light backgrounds or explicit high-contrast "
+        "cell pairings guarantee readability across all assistive viewers."
     ),
 }
 
