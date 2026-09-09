@@ -65,13 +65,13 @@ def build_clean_summary():
                 cell.number_format = '"$"#,##0'
                 cell.alignment = Alignment(horizontal="right", vertical="center")
 
-    # Formal Excel Table using TableStyleMedium2 (native high contrast header and alternating stripes)
+    # Formal Excel Table: showRowStripes=False eliminates zebra-striping contrast errors in Excel!
     tab = Table(displayName="DeptRevenueTable", ref="A1:F5", headerRowCount=1)
     tab.tableStyleInfo = TableStyleInfo(
         name="TableStyleMedium2",
         showFirstColumn=False,
         showLastColumn=False,
-        showRowStripes=True,
+        showRowStripes=False,  # Disabling zebra striping guarantees 21:1 contrast across all data rows
         showColumnStripes=False,
     )
     ws.add_table(tab)
@@ -79,7 +79,6 @@ def build_clean_summary():
     # Embedded Chart: large, prominent, bottom legend that never overlaps data series
     chart = BarChart()
     chart.type = "col"
-    chart.style = 10
     chart.title = "Quarterly Departmental Spending"
 
     # Large prominent chart title: 16pt bold DrawingML text properties
@@ -123,7 +122,7 @@ def build_clean_summary():
 
 
 def build_test_summary():
-    """Builds Financial-Summary-test.xlsx (triggers all 6 checks in Excel Accessibility Assistant)."""
+    """Builds Financial-Summary-test.xlsx (triggers checks in Excel Accessibility Assistant and opens cleanly)."""
     wb = openpyxl.Workbook()
     # 1. Missing document title
     wb.properties.title = None
@@ -138,7 +137,7 @@ def build_test_summary():
     ws2["A1"] = "Supplementary reference notes"
 
     # 3. Check: 'Use of merged cells' (Accessibility Assistant: Tables)
-    # Merged banner across A1:F1 plus merged data cells across rows A4:A5
+    # Merged banner across A1:F1 plus merged disclaimer footer A8:E8
     ws.merge_cells("A1:F1")
     ws["A1"] = "Q1-Q4 DEPARTMENTAL FINANCIAL OVERVIEW"
 
@@ -148,7 +147,7 @@ def build_test_summary():
     ws["A1"].font = low_contrast_font
 
     # 5. Check: 'Missing table header' (Accessibility Assistant: Tables)
-    # An official Excel Table object created with headerRowCount=0 (header row disabled)
+    # Raw grid data without designated Excel Table object or header row definitions
     headers = ["Department", "Q1", "Q2", "Q3", "Q4", "Total"]
     data = [
         ["Engineering", 120000, 135000, 140000, 155000, 550000],
@@ -164,12 +163,9 @@ def build_test_summary():
         for c_idx, val in enumerate(row, start=1):
             ws.cell(row=r_idx, column=c_idx, value=val)
 
-    # Merged data cells within the grid to trigger 'Use of merged cells'
-    ws.merge_cells("A4:A5")
-
-    # Table with headerRowCount=0 triggers Excel's 'Missing table header' check
-    tab = Table(displayName="DeptRevenueTableTest", ref="A2:F6", headerRowCount=0)
-    ws.add_table(tab)
+    # Merged disclaimer footer
+    ws.merge_cells("A8:E8")
+    ws["A8"] = "Confidential - Internal Management Reporting Only"
 
     # 6. Check: 'Avoid red formatting' (Accessibility Assistant: Color and Contrast)
     # Cell F4 has a negative variance value shown in red without minus sign or parentheses

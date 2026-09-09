@@ -248,6 +248,35 @@ def ensure_drawing_alt_texts(xlsx_path: Union[str, Path]) -> bool:
         with zipfile.ZipFile(p, "r") as zin, zipfile.ZipFile(temp_zip, "w") as zout:
             for item in zin.infolist():
                 data = zin.read(item.filename)
+                if item.filename == "xl/styles.xml":
+                    import xml.etree.ElementTree as ET
+
+                    ET.register_namespace("", "http://schemas.openxmlformats.org/spreadsheetml/2006/main")
+                    root = ET.fromstring(data)
+                    for xf in root.iter():
+                        if xf.tag.endswith("xf"):
+                            if xf.attrib.get("fontId", "0") != "0" and "applyFont" not in xf.attrib:
+                                xf.set("applyFont", "1")
+                                modified = True
+                            if xf.attrib.get("fillId", "0") != "0" and "applyFill" not in xf.attrib:
+                                xf.set("applyFill", "1")
+                                modified = True
+                    if modified:
+                        data = ET.tostring(root, encoding="utf-8")
+
+                if item.filename.startswith("xl/charts/chart") and item.filename.endswith(".xml"):
+                    import xml.etree.ElementTree as ET
+
+                    ET.register_namespace("c", "http://schemas.openxmlformats.org/drawingml/2006/chart")
+                    ET.register_namespace("a", "http://schemas.openxmlformats.org/drawingml/2006/main")
+                    root = ET.fromstring(data)
+                    for elem in list(root):
+                        if elem.tag.endswith("style"):
+                            root.remove(elem)
+                            modified = True
+                    if modified:
+                        data = ET.tostring(root, encoding="utf-8")
+
                 if item.filename.startswith("xl/drawings/drawing") and item.filename.endswith(".xml"):
                     import xml.etree.ElementTree as ET
 
