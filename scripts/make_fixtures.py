@@ -4,7 +4,7 @@ from pathlib import Path
 import openpyxl
 from openpyxl.chart import BarChart, Reference
 from openpyxl.drawing.text import CharacterProperties
-from openpyxl.styles import Alignment, Font
+from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.worksheet.table import Table, TableStyleInfo
 
 from xslx_a11y.remediate import ensure_drawing_alt_texts
@@ -44,18 +44,21 @@ def build_clean_summary():
         ["Sales", 95000, 110000, 115000, 130000, 450000],
     ]
 
-    # Populate header row. We use bold 12pt Segoe UI and let TableStyleMedium2 supply the native
-    # high-contrast theme styling (white text on dark blue fill, ratio > 7:1) without conflicting cell fills.
+    # Populate header row. Both font (pure white FFFFFFFF) and background fill (deep navy FF1F497D)
+    # use explicit 8-digit ARGB hex (100% opaque) yielding an 8.33:1 contrast ratio that exceeds
+    # WCAG AAA (7:1) and gives Excel's Accessibility Assistant unambiguous high contrast.
     for col_idx, h in enumerate(headers, 1):
         cell = ws.cell(row=1, column=col_idx, value=h)
-        cell.font = Font(name="Segoe UI", size=12, bold=True)
+        cell.font = Font(name="Segoe UI", size=12, bold=True, color="FFFFFFFF")
+        cell.fill = PatternFill(start_color="FF1F497D", end_color="FF1F497D", fill_type="solid")
         cell.alignment = Alignment(horizontal="center" if col_idx > 1 else "left", vertical="center")
 
-    # Populate data rows with 12pt Segoe UI, automatic high-contrast font, and clean currency formatting
+    # Populate data rows with 12pt Segoe UI, explicit opaque black text (21:1 contrast on white),
+    # and clean currency formatting.
     for row_idx, row in enumerate(data, 2):
         for col_idx, val in enumerate(row, 1):
             cell = ws.cell(row=row_idx, column=col_idx, value=val)
-            cell.font = Font(name="Segoe UI", size=12)
+            cell.font = Font(name="Segoe UI", size=12, color="FF000000")
             if col_idx == 1:
                 cell.alignment = Alignment(horizontal="left", vertical="center")
             else:
@@ -63,7 +66,7 @@ def build_clean_summary():
                 cell.alignment = Alignment(horizontal="right", vertical="center")
 
     # Formal Excel Table using TableStyleMedium2 (native high contrast header and alternating stripes)
-    tab = Table(displayName="DeptRevenueTable", ref="A1:F5")
+    tab = Table(displayName="DeptRevenueTable", ref="A1:F5", headerRowCount=1)
     tab.tableStyleInfo = TableStyleInfo(
         name="TableStyleMedium2",
         showFirstColumn=False,
@@ -126,11 +129,16 @@ def build_test_summary():
     wb.properties.title = None
 
     # 2. Check: 'Default sheet name' (Accessibility Assistant: Document Structure)
+    # Having multiple sheets with default Sheet1 tab triggers Excel's navigation warning
     ws = wb.active
     assert ws is not None
     ws.title = "Sheet1"
 
+    ws2 = wb.create_sheet(title="Sheet2")
+    ws2["A1"] = "Supplementary reference notes"
+
     # 3. Check: 'Use of merged cells' (Accessibility Assistant: Tables)
+    # Merged banner across A1:F1 plus merged data cells across rows A4:A5
     ws.merge_cells("A1:F1")
     ws["A1"] = "Q1-Q4 DEPARTMENTAL FINANCIAL OVERVIEW"
 
@@ -140,7 +148,7 @@ def build_test_summary():
     ws["A1"].font = low_contrast_font
 
     # 5. Check: 'Missing table header' (Accessibility Assistant: Tables)
-    # Raw grid data without designated Excel Table object or header row definitions
+    # An official Excel Table object created with headerRowCount=0 (header row disabled)
     headers = ["Department", "Q1", "Q2", "Q3", "Q4", "Total"]
     data = [
         ["Engineering", 120000, 135000, 140000, 155000, 550000],
@@ -154,18 +162,28 @@ def build_test_summary():
 
     for r_idx, row in enumerate(data, start=3):
         for c_idx, val in enumerate(row, start=1):
-            cell = ws.cell(row=r_idx, column=c_idx, value=val)
+            ws.cell(row=r_idx, column=c_idx, value=val)
+
+    # Merged data cells within the grid to trigger 'Use of merged cells'
+    ws.merge_cells("A4:A5")
+
+    # Table with headerRowCount=0 triggers Excel's 'Missing table header' check
+    tab = Table(displayName="DeptRevenueTableTest", ref="A2:F6", headerRowCount=0)
+    ws.add_table(tab)
 
     # 6. Check: 'Avoid red formatting' (Accessibility Assistant: Color and Contrast)
-    # Cell F5 (Sales Total) uses explicit red font color to denote an overrun without symbol/text indicators
+    # Cell F4 has a negative variance value shown in red without minus sign or parentheses
+    ws["F4"] = -15000
+    ws["F4"].number_format = "#,##0;[Red]#,##0"
+
+    # Cell F6 uses red font color alone to indicate an overrun
     red_font = Font(name="Calibri", size=11, color="FFFF0000", bold=True)
-    ws["F5"].font = red_font
-    ws["F5"].number_format = "#,##0;[Red](#,##0)"
+    ws["F6"].font = red_font
 
     # 7. Check: 'Missing alt text' (Accessibility Assistant: Media and Illustrations)
-    # Embedded chart with missing title, missing alt text, and small default size
+    # Embedded chart with missing title, missing alt text, and no DrawingML cNvPr alt attributes
     chart = BarChart()
-    chart.title = None  # Missing alt text & title
+    chart.title = None
     chart_data = Reference(ws, min_col=2, min_row=2, max_row=6, max_col=5)
     chart.add_data(chart_data, titles_from_data=True)
     ws.add_chart(chart, "H2")

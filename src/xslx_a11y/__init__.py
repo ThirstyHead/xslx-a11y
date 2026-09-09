@@ -12,8 +12,8 @@ try:
         frame = _orig_chart_frame(self, idx)
         if idx <= len(self.charts):
             c = self.charts[idx - 1]
-            descr = getattr(c, "_alt_text", None) or getattr(c, "title", None) or ""
-            title = getattr(c, "_alt_title", None) or (c.title if isinstance(c.title, str) else "") or "Chart"
+            descr = getattr(c, "_alt_text", None) or ""
+            title = getattr(c, "_alt_title", None) or (c.title if isinstance(c.title, str) else "") or ""
             if descr:
                 frame.nvGraphicFramePr.cNvPr.descr = str(descr)
             if title:
